@@ -1,11 +1,11 @@
+require("dotenv").config();
 const app = require("./app");
 
-const express = require("express");
-
 const { sequelize, User, Post } = require("./src/models");
-require("dotenv").config();
 
 const port = process.env.PORT || 8000;
+
+console.log(process.env.NODE_ENV);
 
 const main = async () => {
   app.listen(port, () => {

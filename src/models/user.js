@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(Post, { foreignKey: "userId", as: "posts" });
     }
     toJSON() {
-      return { ...this.get(), id: undefined };
+      return { ...this.get(), id: undefined, password: undefined };
     }
   }
   User.init(
@@ -28,24 +28,29 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: { msg: "Name must not be empty" },
         },
       },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
         validate: {
-          isEmail: { msg: "please use a valid email adress" },
+          isEmail: { msg: "please use a valid email address" },
         },
       },
       role: {
         type: DataTypes.STRING,
         allowNull: false,
+        defaultValue: "user",
       },
     },
     {
       sequelize,
       tableName: "users",
       modelName: "User",
-    }
+    },
   );
   return User;
 };
