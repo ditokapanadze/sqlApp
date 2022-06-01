@@ -8,13 +8,23 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      body: {
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      description: {
         type: DataTypes.STRING,
         allowNull: false,
       },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+      },
+      url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue:
+          "https://m.media-amazon.com/images/I/61QiUmahC6L._AC_SY741_.jpg",
       },
       uuid: {
         type: DataTypes.UUID,

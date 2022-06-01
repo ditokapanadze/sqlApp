@@ -20,16 +20,26 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      body: {
+      title: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue:
+          "https://m.media-amazon.com/images/I/61QiUmahC6L._AC_SY741_.jpg",
       },
     },
     {
       sequelize,
       tableName: "posts",
       modelName: "Post",
-    }
+    },
   );
   return Post;
 };
