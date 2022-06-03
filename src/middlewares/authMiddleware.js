@@ -8,7 +8,6 @@ const verifyToken = async (req, res, next) => {
   if (!token) {
     throw new AppError(`not authorized`, 401);
   }
-
   const { email } = jwt.verify(token, process.env.SECRET_KEY);
   if (!email) throw new AppError(`not authorized`, 401);
   const user = await User.findOne({ where: { email } });
@@ -16,7 +15,6 @@ const verifyToken = async (req, res, next) => {
     throw new AppError(`user not found`, 404);
   }
   req.user = user;
-
   next();
 };
 
