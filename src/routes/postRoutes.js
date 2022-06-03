@@ -5,7 +5,7 @@ const {
   updatePost,
 } = require("../controllers/postControllers");
 const { validatorMiddleware } = require("../middlewares/validatoMiddleware");
-const { postValidation } = require("../validator/postValidation");
+const { postValidation } = require("../validations/postValidation");
 const verifyToken = require("../middlewares/authMiddleware");
 
 router.post(

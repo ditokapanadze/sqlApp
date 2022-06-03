@@ -19,8 +19,7 @@ const deletePost = async (postUUID, user) => {
 };
 const updatePost = async (postData, postUUID, user) => {
   const { title, description } = postData;
-  console.log(title);
-  console.log(description);
+
   const post = await Post.findOne({
     where: { userID: user.id, uuid: "869be2d1-d50d-4461-96fe-81c9909868e9" },
   });
