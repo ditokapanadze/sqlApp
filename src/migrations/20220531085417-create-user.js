@@ -44,6 +44,16 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
       },
+      resetToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      resetTokenExpireAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
