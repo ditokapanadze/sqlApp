@@ -19,6 +19,7 @@ const register = async (userData) => {
 
   const activationToken = crypto.randomBytes(32).toString("hex");
   const date = new Date();
+
   const user = await User.create({
     email,
     name,
@@ -27,14 +28,14 @@ const register = async (userData) => {
     tokenExpireAt: date.setDate(date.getDate() + 1),
   });
 
-  const verificationLink = `http://localhost:8000/${activationToken}`;
+  const verificationLink = `http://localhost:8000/api/v1/auth/verification/${activationToken}`;
   const message = `
   <h4>Follow link above to verify your account</h4>
   <a href=${verificationLink} >${verificationLink}</a>
   <p>Please follow the link bellow, and do not share it with anybody:</p>
   <p>P</p>
 `;
-
+  console.log(verificationLink);
   await sendEmail({
     to: user.email,
     subject: "Profile Verification",
@@ -43,10 +44,10 @@ const register = async (userData) => {
 
   const token = jwt.sign(
     {
-      id: user.uuid,
+      uuid: user.uuid,
       name: user.name,
       email: user.email,
-      activationToken,
+      verified: user.verified,
     },
     process.env.SECRET_KEY,
   );
@@ -75,7 +76,66 @@ const login = async (userData) => {
   return token;
 };
 
+const verification = async (token) => {
+  const user = await User.findOne({ where: { activationToken: token } });
+
+  console.log(token);
+
+  const d = new Date();
+
+  let presentTime = d.getTime();
+  let expireTime = user.tokenExpireAt.getTime();
+  if (expireTime < presentTime) {
+    throw new AppError(`verification time has expired`, 400);
+  }
+
+  user.activationToken = null;
+  user.tokenExpireAt = null;
+  user.verified = true;
+
+  await user.save();
+
+  return true;
+};
+
+const verificationReq = async (uuid) => {
+  const user = await User.findOne({ where: { uuid } });
+  if (user.verified) throw new AppError(`Account already verified`, 400);
+
+  const d = new Date();
+  let presentTime = d.getTime();
+  let expireTime = user.tokenExpireAt.getTime();
+
+  if (expireTime < presentTime) {
+    const activationToken = crypto.randomBytes(32).toString("hex");
+    const date = new Date();
+
+    user.activationToken = activationToken;
+    user.tokenExpireAt = date.setDate(date.getDate() + 1);
+
+    await user.save();
+
+    const verificationLink = `http://localhost:8000/api/v1/auth/verification/${activationToken}`;
+
+    const message = `
+    <h4>Follow link above to verify your account</h4>
+    <a href=${verificationLink} >${verificationLink}</a>
+    <p>Please follow the link bellow, and do not share it with anybody:</p>
+    <p>P</p>
+  `;
+    await sendEmail({
+      to: user.email,
+      subject: "Profile Verification",
+      text: message,
+    });
+  } else {
+    throw new AppError(`something went wrong`, 500);
+  }
+};
+
 module.exports = {
   register,
   login,
+  verification,
+  verificationReq,
 };
