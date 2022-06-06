@@ -70,6 +70,7 @@ const login = async (userData) => {
       id: user.uuid,
       name: user.name,
       email: user.email,
+      verified: user.verified,
     },
     process.env.SECRET_KEY,
   );
