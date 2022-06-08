@@ -2,6 +2,8 @@ const {
   createPost,
   deletePost,
   updatePost,
+  getAll,
+  photoUpload,
 } = require("../services/postServices.js");
 
 exports.createPost = async (req, res, next) => {
@@ -29,4 +31,15 @@ exports.updatePost = async (req, res, next) => {
   const post = await updatePost(postData, postUUID, user);
 
   res.status(200).json({ post, msg: "post updated" });
+};
+
+exports.getAll = async (req, res, next) => {
+  const posts = await getAll();
+
+  res.status(200).json(posts);
+};
+exports.photoUpload = async (req, res, next) => {
+  const posts = await photoUpload();
+
+  res.status(200).json(posts);
 };

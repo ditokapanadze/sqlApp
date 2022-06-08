@@ -3,6 +3,8 @@ const {
   createPost,
   deletePost,
   updatePost,
+  getAll,
+  photoUpload,
 } = require("../controllers/postControllers");
 const { validatorMiddleware } = require("../middlewares/validatoMiddleware");
 const { postValidation } = require("../validations/postValidation");
@@ -18,4 +20,8 @@ router.delete("/:uuid", verifyToken, deletePost);
 
 // put "/api/v1/posts/:uuid"
 router.put("/:uuid", verifyToken, updatePost);
+
+// get all post with users
+router.get("/", getAll);
+router.post("/photoupload", photoUpload);
 module.exports = router;

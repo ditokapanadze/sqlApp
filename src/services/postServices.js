@@ -1,6 +1,7 @@
 const AppError = require("../utils/appError");
 const { Post } = require("../models");
 const { User } = require("../models");
+const post = require("../models/post");
 
 const createPost = async (postData, user) => {
   const { title, description } = postData;
@@ -34,8 +35,20 @@ const updatePost = async (postData, postUUID, user) => {
   return post;
 };
 
+const getAll = async () => {
+  const posts = await Post.findAll({ include: [{ model: User, as: "user" }] });
+  if (post.length < 1) throw new AppError("no posts found", 400);
+
+  return posts;
+};
+const photoUpload = async (x) => {
+  console.log(x);
+};
+
 module.exports = {
   createPost,
   deletePost,
   updatePost,
+  getAll,
+  photoUpload,
 };

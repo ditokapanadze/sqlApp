@@ -1,20 +1,22 @@
 const AppError = require("../utils/appError");
 const Sequelize = require("sequelize");
+
 const Op = Sequelize.Op;
-const { User } = require("../models");
+
+const { User, Post, FriendRequests, Friends } = require("../models");
 const crypto = require("crypto");
 const sendEmail = require("../utils/mailer.js");
 const bcrypt = require("bcryptjs");
 const searchUser = async (query) => {
-  console.log(query);
   const user = await User.findAll({
     where: {
       name: {
         [Op.like]: "%" + query.name + "%",
       },
     },
+    include: [{ model: Post, as: "posts" }],
   });
-  if (user.length < 1) resetrequest;
+  // if (user.length < 1) resetrequest;
   return user;
 };
 
@@ -48,7 +50,6 @@ const resetRequest = async (email) => {
     subject: "Password reset",
     text: message,
   });
-  console.log(mailSent);
 
   return true;
 };
@@ -76,9 +77,66 @@ const passwordReset = async (token, password) => {
   return true;
 };
 
+const sendFriendRequest = async (sender, receiver) => {
+  const sender_uuid = sender.uuid;
+  const receiver_uuid = receiver.uuid;
+  console.log(receiver);
+  const user = await User.findOne({
+    where: {
+      uuid: receiver_uuid,
+    },
+    include: [{ model: User, as: "sentRequests" }],
+  });
+  if (user.uuid === sender.uuid) {
+    throw new AppError(`you can not send friend request to yourself`, 400);
+  }
+  const checkRequest = await FriendRequests.findOne({
+    where: {
+      sender_uuid,
+      receiver_uuid,
+    },
+  });
+  if (checkRequest) {
+    throw new AppError(`friend request already sent`, 400);
+  }
+  const newFriendRequest = await FriendRequests.create({
+    sender_uuid,
+    receiver_uuid,
+  });
+  return newFriendRequest;
+};
+
+const responseFriendRequest = async (sender_uuid, receiver_uuid, confirm) => {
+  console.log(sender_uuid);
+  console.log(confirm);
+  if (confirm) {
+    const checkFriend = await Friends.findOne({ sender_uuid, receiver_uuid });
+    if (checkFriend) {
+      throw new AppError(`Friend already added`, 400);
+    }
+
+    const friend = await Friends.create({ sender_uuid, receiver_uuid });
+    const request = await FriendRequests.findOne({
+      sender_uuid,
+      receiver_uuid,
+    });
+    await request.destroy();
+    return true;
+  } else {
+    const request = await FriendRequests.findOne({
+      sender_uuid,
+      receiver_uuid,
+    });
+    await request.destroy();
+    return false;
+  }
+};
+
 module.exports = {
   searchUser,
   getAll,
   resetRequest,
   passwordReset,
+  sendFriendRequest,
+  responseFriendRequest,
 };
