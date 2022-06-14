@@ -15,6 +15,7 @@ const searchUser = async (query) => {
       },
     },
     include: [{ model: Post, as: "posts" }],
+    include: [{ model: User, as: "sentRequests" }],
   });
   // if (user.length < 1) resetrequest;
   return user;

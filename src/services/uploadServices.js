@@ -1,10 +1,11 @@
 const AppError = require("../utils/appError");
 const AWS = require("aws-sdk");
 const { uuid } = require("uuidv4");
+const { S3_BASE_URL } = require("../constant");
 
 const s3 = new AWS.S3({
-  accessKeyId: "AKIARRQAIGZF5UJT2DUF",
-  secretAccessKey: "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",
+  accessKeyId: process.env.AWS_KEY,
+  secretAccessKey: process.env.AWS_SECRET,
   signatureVersion: "v4",
   region: "eu-central-1",
 });
@@ -16,11 +17,12 @@ const upload = async (user) => {
   const url = await s3.getSignedUrl("putObject", {
     Bucket: "blog-bucket556444",
     ContentType: "image/jpeg",
-    Key: "769cd8d0-3eae-4ff2-ac7e-8e3ba1ab8009.jpeg",
+    Key: key,
   });
   console.log(url);
+  const imageUrl = `${S3_BASE_URL}/${key}`;
   if (!url) throw new AppError("something went wrong", 500);
-  return { url, key };
+  return { url, imageUrl };
 };
 
 module.exports = {

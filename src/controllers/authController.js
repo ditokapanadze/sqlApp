@@ -1,4 +1,3 @@
-const { catchAsync } = require("../utils/catchAsync");
 const {
   register,
   login,

@@ -4,7 +4,7 @@ const AppError = require("../utils/appError");
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-
+  console.log(req.headers);
   if (!token) {
     throw new AppError(`not authorized`, 401);
   }
