@@ -5,6 +5,7 @@ const {
   passwordReset,
   responseFriendRequest,
   sendFriendRequest,
+  changeAvatar,
 } = require("../services/userServices.js");
 
 exports.searchUser = async (req, res, next) => {
@@ -47,7 +48,7 @@ exports.responseFriendRequest = async (req, res, next) => {
   const sender_uuid = req.query.uuid;
   const receiver_uuid = req.user.uuid;
   const confirm = req.query.confirm;
-  console.log();
+
   const response = await responseFriendRequest(
     sender_uuid,
     receiver_uuid,
@@ -58,4 +59,12 @@ exports.responseFriendRequest = async (req, res, next) => {
   } else {
     res.status(200).json({ msg: "friend request declined" });
   }
+};
+
+exports.changeAvatar = async (req, res, next) => {
+  const user_uuid = req.user.uuid;
+  const { photoUrl } = req.body;
+  const response = await changeAvatar(user_uuid, photoUrl);
+
+  res.status(200).json({ msg: "Avatar changed" });
 };

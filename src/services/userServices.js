@@ -81,7 +81,7 @@ const passwordReset = async (token, password) => {
 const sendFriendRequest = async (sender, receiver) => {
   const sender_uuid = sender.uuid;
   const receiver_uuid = receiver.uuid;
-  console.log(receiver);
+
   const user = await User.findOne({
     where: {
       uuid: receiver_uuid,
@@ -108,8 +108,6 @@ const sendFriendRequest = async (sender, receiver) => {
 };
 
 const responseFriendRequest = async (sender_uuid, receiver_uuid, confirm) => {
-  console.log(sender_uuid);
-  console.log(confirm);
   if (confirm) {
     const checkFriend = await Friends.findOne({ sender_uuid, receiver_uuid });
     if (checkFriend) {
@@ -133,6 +131,19 @@ const responseFriendRequest = async (sender_uuid, receiver_uuid, confirm) => {
   }
 };
 
+const changeAvatar = async (user_uuid, photoUrl) => {
+  console.log(user_uuid);
+  console.log(photoUrl);
+  const user = await User.findOne({ where: { uuid: user_uuid } });
+
+  if (!user) {
+    throw new AppError(`Friend already added`, 400);
+  }
+  console.log(user);
+  user.avatar = photoUrl;
+  await user.save();
+};
+
 module.exports = {
   searchUser,
   getAll,
@@ -140,4 +151,5 @@ module.exports = {
   passwordReset,
   sendFriendRequest,
   responseFriendRequest,
+  changeAvatar,
 };

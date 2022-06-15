@@ -27,7 +27,7 @@ exports.updatePost = async (req, res, next) => {
   const { uuid } = req.params;
   const postUUID = uuid;
   const user = req.user;
-  //   console.log(postUUID);
+
   const post = await updatePost(postData, postUUID, user);
 
   res.status(200).json({ post, msg: "post updated" });

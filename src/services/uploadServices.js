@@ -11,15 +11,14 @@ const s3 = new AWS.S3({
 });
 
 const upload = async (user) => {
-  console.log(user);
-  const key = `${user.id}/${uuid()}.jpeg`;
+  const key = `${user.uuid}/${uuid()}.jpeg`;
 
   const url = await s3.getSignedUrl("putObject", {
     Bucket: "blog-bucket556444",
     ContentType: "image/jpeg",
     Key: key,
   });
-  console.log(url);
+
   const imageUrl = `${S3_BASE_URL}/${key}`;
   if (!url) throw new AppError("something went wrong", 500);
   return { url, imageUrl };

@@ -80,6 +80,11 @@ module.exports = (sequelize, DataTypes) => {
           isEmail: { msg: "please use a valid email address" },
         },
       },
+      avatar: {
+        type: DataTypes.STRING,
+        defaultValue:
+          "https://image.shutterstock.com/image-vector/creative-vector-illustration-default-avatar-260nw-779277895.jpg",
+      },
       role: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -94,5 +99,3 @@ module.exports = (sequelize, DataTypes) => {
   );
   return User;
 };
-
-("use strict");

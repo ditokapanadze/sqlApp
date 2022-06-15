@@ -35,7 +35,9 @@ const sendFriendRequest = async (sender, receiver) => {
 
 const responseFriendRequest = async (sender_uuid, receiver_uuid, confirm) => {
   if (confirm) {
-    const checkFriend = await Friends.findOne({ sender_uuid, receiver_uuid });
+    const checkFriend = await Friends.findOne({
+      where: { sender_uuid, receiver_uuid },
+    });
     if (checkFriend) {
       throw new AppError(`Friend already added`, 400);
     }

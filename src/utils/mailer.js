@@ -14,8 +14,7 @@ const sendEmail = (info) => {
       rejectUnauthorized: false,
     },
   });
-  console.log(process.env.MAIL_PASS);
-  console.log(process.env.GMAIL);
+
   const options = {
     from: process.env.GMAIL,
     to: info.to,
@@ -24,9 +23,12 @@ const sendEmail = (info) => {
   };
   transporter.sendMail(options, function (err, info) {
     if (err) {
+      console.log("mail erorrrrrrrrrrr");
       console.log(err);
       return;
     } else {
+      console.log("mail infoooooo");
+
       console.log(info);
     }
   });

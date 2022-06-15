@@ -35,7 +35,7 @@ const register = async (userData) => {
   <p>Please follow the link bellow, and do not share it with anybody:</p>
   <p>P</p>
 `;
-  console.log(verificationLink);
+
   await sendEmail({
     to: user.email,
     subject: "Profile Verification",
@@ -79,8 +79,6 @@ const login = async (userData) => {
 
 const verification = async (token) => {
   const user = await User.findOne({ where: { activationToken: token } });
-
-  console.log(token);
 
   const d = new Date();
 

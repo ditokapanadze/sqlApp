@@ -16,7 +16,7 @@ exports.responseFriendRequest = async (req, res, next) => {
   const sender_uuid = req.query.uuid;
   const receiver_uuid = req.user.uuid;
   const confirm = req.query.confirm;
-  console.log();
+
   const response = await responseFriendRequest(
     sender_uuid,
     receiver_uuid,
