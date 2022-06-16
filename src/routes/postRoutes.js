@@ -5,6 +5,8 @@ const {
   updatePost,
   getAll,
   photoUpload,
+  getPosts,
+  singlePost,
 } = require("../controllers/postControllers");
 const { validatorMiddleware } = require("../middlewares/validatoMiddleware");
 const { postValidation } = require("../validations/postValidation");
@@ -23,5 +25,9 @@ router.put("/:uuid", verifyToken, updatePost);
 
 // get all post with users
 router.get("/", getAll);
+//get all posts with user uuid
+router.get("/getposts", verifyToken, getPosts);
+// get single post by uuid
+router.get("/:uuid", singlePost);
 router.post("/photoupload", photoUpload);
 module.exports = router;

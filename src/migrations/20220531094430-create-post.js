@@ -9,15 +9,15 @@ module.exports = {
         type: DataTypes.INTEGER,
       },
       title: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       description: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
-      userId: {
-        type: DataTypes.INTEGER,
+      author_uuid: {
+        type: DataTypes.UUID,
         allowNull: false,
       },
       url: {

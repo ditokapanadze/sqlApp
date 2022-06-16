@@ -4,12 +4,15 @@ const {
   updatePost,
   getAll,
   photoUpload,
+  getPosts,
+  singlePost,
 } = require("../services/postServices.js");
 
 exports.createPost = async (req, res, next) => {
   const postData = req.body;
-  const user = req.user;
-  const post = await createPost(postData, user);
+  const uuid = req.user.uuid;
+
+  const post = await createPost(postData, uuid);
 
   res.status(200).json({ post });
 };
@@ -41,5 +44,20 @@ exports.getAll = async (req, res, next) => {
 exports.photoUpload = async (req, res, next) => {
   const posts = await photoUpload();
 
+  res.status(200).json(posts);
+};
+exports.getPosts = async (req, res, next) => {
+  const uuid = req.user.uuid;
+  console.log("post controler");
+  const posts = await getPosts(uuid);
+
+  res.status(200).json(posts);
+};
+exports.singlePost = async (req, res, next) => {
+  console.log("uuid");
+  const { uuid } = req.params;
+  console.log(req.params);
+  const posts = await singlePost(uuid);
+  console.log(posts);
   res.status(200).json(posts);
 };

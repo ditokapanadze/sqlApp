@@ -14,8 +14,10 @@ const searchUser = async (query) => {
         [Op.like]: "%" + query.name + "%",
       },
     },
-    include: [{ model: Post, as: "posts" }],
-    include: [{ model: User, as: "sentRequests" }],
+    include: [
+      { model: Post, as: "posts" },
+      { model: User, as: "sentRequests" },
+    ],
   });
   // if (user.length < 1) resetrequest;
   return user;

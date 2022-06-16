@@ -73,6 +73,7 @@ const login = async (userData) => {
       verified: user.verified,
     },
     process.env.SECRET_KEY,
+    { expiresIn: "24h" },
   );
   return token;
 };

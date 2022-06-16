@@ -5,14 +5,14 @@ exports.postValidation = [
     .trim()
     .notEmpty()
     .withMessage("title is required")
-    .isLength({ min: 4, max: 30 })
-    .withMessage("title should be at least 4 and max 30 characters long"),
+    .isLength({ min: 4, max: 300 })
+    .withMessage("title should be at least 4 and max 300 characters long"),
   body("description")
     .trim()
     .notEmpty()
     .withMessage("description is required")
-    .isLength({ min: 4, max: 500 })
+    .isLength({ min: 4, max: 15500 })
     .withMessage(
-      "description should be at least 4 and max 500 characters long",
+      "description should be at least 4 and max 15500 characters long",
     ),
 ];

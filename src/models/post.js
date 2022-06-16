@@ -8,10 +8,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({ User }) {
-      this.belongsTo(User, { foreignKey: "userId", as: "user" });
+      this.belongsTo(User, {
+        foreignKey: "author_uuid",
+        targetKey: "uuid",
+        as: "user",
+      });
     }
     toJSON() {
-      return { ...this.get(), id: undefined, userId: undefined };
+      return { ...this.get(), id: undefined };
     }
   }
   Post.init(
@@ -21,11 +25,11 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
       },
       title: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       description: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       url: {
@@ -33,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue:
           "https://m.media-amazon.com/images/I/61QiUmahC6L._AC_SY741_.jpg",
+      },
+      author_uuid: {
+        type: DataTypes.UUIDV4,
+        allowNull: false,
       },
     },
     {

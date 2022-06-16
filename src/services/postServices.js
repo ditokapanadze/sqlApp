@@ -3,10 +3,10 @@ const { Post } = require("../models");
 const { User } = require("../models");
 const post = require("../models/post");
 
-const createPost = async (postData, user) => {
+const createPost = async (postData, uuid) => {
   const { title, description } = postData;
-
-  const post = await Post.create({ title, description, userId: user.id });
+  console.log(uuid);
+  const post = await Post.create({ title, description, author_uuid: uuid });
   return post;
 };
 const deletePost = async (postUUID, user) => {
@@ -36,13 +36,25 @@ const updatePost = async (postData, postUUID, user) => {
 };
 
 const getAll = async () => {
-  const posts = await Post.findAll({ include: [{ model: User, as: "user" }] });
+  const posts = await Post.findAll({ include: "user" });
   if (post.length < 1) throw new AppError("no posts found", 400);
 
   return posts;
 };
 const photoUpload = async (x) => {
   console.log(x);
+};
+const getPosts = async (uuid) => {
+  console.log(uuid);
+  const posts = await Post.findAll({ where: { author_uuid: uuid } });
+  if (post.length < 1) throw new AppError("no posts found", 400);
+  return posts;
+};
+const singlePost = async (uuid) => {
+  const posts = await Post.findOne({ where: { uuid: uuid } });
+  console.log(posts);
+  if (!post) throw new AppError("no posts found", 400);
+  return posts;
 };
 
 module.exports = {
@@ -51,4 +63,6 @@ module.exports = {
   updatePost,
   getAll,
   photoUpload,
+  getPosts,
+  singlePost,
 };
