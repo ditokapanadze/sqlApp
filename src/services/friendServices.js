@@ -1,5 +1,5 @@
 const AppError = require("../utils/appError");
-const Sequelize = require("sequelize");
+
 const { Op } = require("sequelize");
 
 const { User, FriendRequests, Friends } = require("../models");

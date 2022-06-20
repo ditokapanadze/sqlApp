@@ -30,8 +30,8 @@ exports.updatePost = async (req, res, next) => {
   const { uuid } = req.params;
   const postUUID = uuid;
   const user = req.user;
-
-  const post = await updatePost(postData, postUUID, user);
+  console.log(uuid);
+  const post = await updatePost(postData, uuid, user);
 
   res.status(200).json({ post, msg: "post updated" });
 };

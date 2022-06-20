@@ -1,6 +1,6 @@
 const AppError = require("../utils/appError");
 const { Post } = require("../models");
-const { User } = require("../models");
+
 const post = require("../models/post");
 
 const createPost = async (postData, uuid) => {
@@ -10,20 +10,32 @@ const createPost = async (postData, uuid) => {
   return post;
 };
 const deletePost = async (postUUID, user) => {
+  console.log(user);
   const post = await Post.findOne({
-    where: { uuid: postUUID, userId: user.id },
+    where: { uuid: postUUID, author_uuid: user.uuid },
   });
   if (!post) throw new AppError("post not found", 404);
   const response = await post.destroy();
   if (!response) throw new AppError("can not delete post", 400);
   return true;
 };
-const updatePost = async (postData, postUUID, user) => {
+const updatePost = async (postData, uuid, user) => {
   const { title, description } = postData;
+  console.log(
+    "333c7c45-fad9-44c2-9b41-dd12acb7f08d" ===
+      "333c7c45-fad9-44c2-9b41-dd12acb7f08d",
+  );
+  console.log("333c7c45-fad9-44c2-9b41-dd12acb7f08d");
 
+  // console.log(user.uuid);
   const post = await Post.findOne({
-    where: { userID: user.id, uuid: "869be2d1-d50d-4461-96fe-81c9909868e9" },
+    // ეს შესაცვლელია
+    where: {
+      author_uuid: user.uuid,
+      uuid,
+    },
   });
+  console.log(post);
   if (!post) throw new AppError("you can edit only your posts", 404);
 
   post.set({

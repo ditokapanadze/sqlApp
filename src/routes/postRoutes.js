@@ -11,17 +11,18 @@ const {
 const { validatorMiddleware } = require("../middlewares/validatoMiddleware");
 const { postValidation } = require("../validations/postValidation");
 const verifyToken = require("../middlewares/authMiddleware");
+const requireUser = require("../middlewares/requireUser");
 
 // create single post
 // post /api/v1/posts
-router.post("/", verifyToken, validatorMiddleware(postValidation), createPost);
+router.post("/", requireUser, createPost);
 
 // delete single post
 // delete "/api/v1/posts/:uuid"
-router.delete("/:uuid", verifyToken, deletePost);
+router.delete("/:uuid", requireUser, deletePost);
 
 // put "/api/v1/posts/:uuid"
-router.put("/:uuid", verifyToken, updatePost);
+router.put("/:uuid", requireUser, updatePost);
 
 // get all post with users
 router.get("/", getAll);

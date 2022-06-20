@@ -1,10 +1,12 @@
-const { User } = require("../models");
+const { User, RefreshToken } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const mailer = require("nodemailer");
 const AppError = require("../utils/appError");
 const sendEmail = require("../utils/mailer.js");
+const { signJWT, verifyJWT } = require("../utils/jwt");
+const { createSession } = require("../sessions");
 
 const register = async (userData) => {
   const { email, name, password, repassword } = userData;
@@ -58,24 +60,51 @@ const login = async (userData) => {
   const { email, password } = userData;
 
   const user = await User.findOne({ where: { email } });
-  if (!user) throw new AppError(`password or email is incorrect`, 400);
+  if (!user) throw new AppError(`password or email is incorrect`, 401);
 
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
   if (!isPasswordCorrect) {
-    throw new AppError(`password or email is incorrect`, 400);
+    throw new AppError(`password or email is incorrect`, 401);
   }
-  const token = jwt.sign(
+
+  // create session
+  // const session = createSession(email, user.name);
+
+  // access token
+  const accessToken = signJWT(
     {
-      id: user.uuid,
-      name: user.name,
       email: user.email,
-      verified: user.verified,
+      name: user.name,
+      uuid: user.uuid,
     },
-    process.env.SECRET_KEY,
-    { expiresIn: "24h" },
+    "20s",
   );
-  return token;
+
+  // refresh toke
+  const refreshToken = signJWT({ uuid: user.uuid, type_refresh: true }, "1y");
+
+  const newRefresh = await RefreshToken.create({
+    refreshToken,
+    owner_uuid: user.uuid,
+  });
+  // res.cookie("accessToken", accessToken, {
+  //   maxAge: 300000,
+  //   httpOnly: true,
+  // });
+  // const token = jwt.sign(
+  //   {
+  //     id: user.uuid,
+  //     name: user.name,
+  //     email: user.email,
+  //     verified: user.verified,
+  //   },
+  //   process.env.SECRET_KEY,
+  //   { expiresIn: "24h" },
+  // );
+  // return token;
+  // return verifyJWT(accessToken).payload;
+  return { accessToken, user, refreshToken };
 };
 
 const verification = async (token) => {
@@ -133,9 +162,22 @@ const verificationReq = async (uuid) => {
   }
 };
 
+const deleteSession = async (user, refreshToken) => {
+  const token = await RefreshToken.findOne({
+    where: { refreshToken },
+  });
+  if (!token) {
+    // შესაცვლელია
+    throw new AppError(`something went wrong`, 500);
+  }
+  await token.destroy();
+};
+
 module.exports = {
   register,
   login,
   verification,
   verificationReq,
+
+  deleteSession,
 };

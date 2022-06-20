@@ -14,7 +14,6 @@ const verifyToken = async (req, res, next) => {
 
   const user = await User.findOne({ where: { email } });
 
-  console.log("______________________________________________________________");
   if (!user) {
     throw new AppError(`user not found`, 404);
   }

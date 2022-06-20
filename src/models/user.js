@@ -2,11 +2,16 @@
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate({ Post, User, FriendRequests, Friends }) {
+    static associate({ Post, RefreshToken, User, FriendRequests, Friends }) {
       this.hasMany(Post, {
         foreignKey: "author_uuid",
         sourceKey: "uuid",
         as: "posts",
+      });
+      this.hasMany(RefreshToken, {
+        foreignKey: "owner_uuid",
+        sourceKey: "uuid",
+        as: "refreshTokens",
       });
       this.belongsToMany(User, {
         through: FriendRequests,
@@ -30,7 +35,12 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
     toJSON() {
-      return { ...this.get(), id: undefined, password: undefined };
+      return {
+        ...this.get(),
+        id: undefined,
+        password: undefined,
+        refreshToken: undefined,
+      };
     }
   }
   User.init(
@@ -65,6 +75,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
         defaultValue: null,
+      },
+      refreshToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       resetToken: {
         type: DataTypes.STRING,

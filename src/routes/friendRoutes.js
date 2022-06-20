@@ -3,11 +3,12 @@ const {
   sendFriendRequest,
   deleteFriend,
 } = require("../controllers/friendController");
+const requireUser = require("../middlewares/requireUser");
 
 const router = require("express").Router();
-const verifyToken = require("../middlewares/authMiddleware");
-router.post("/friendrequest/:uuid", verifyToken, sendFriendRequest);
-router.post("/friendsconfrim", verifyToken, responseFriendRequest);
-router.delete("/:uuid", verifyToken, deleteFriend);
+
+router.post("/friendrequest/:uuid", requireUser, sendFriendRequest);
+router.post("/friendsconfrim", requireUser, responseFriendRequest);
+router.delete("/:uuid", requireUser, deleteFriend);
 
 module.exports = router;
