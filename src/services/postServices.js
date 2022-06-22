@@ -5,12 +5,12 @@ const post = require("../models/post");
 
 const createPost = async (postData, uuid) => {
   const { title, description } = postData;
-  console.log(uuid);
+
   const post = await Post.create({ title, description, author_uuid: uuid });
   return post;
 };
 const deletePost = async (postUUID, user) => {
-  console.log(user);
+
   const post = await Post.findOne({
     where: { uuid: postUUID, author_uuid: user.uuid },
   });
@@ -35,7 +35,7 @@ const updatePost = async (postData, uuid, user) => {
       uuid,
     },
   });
-  console.log(post);
+
   if (!post) throw new AppError("you can edit only your posts", 404);
 
   post.set({
@@ -54,17 +54,17 @@ const getAll = async () => {
   return posts;
 };
 const photoUpload = async (x) => {
-  console.log(x);
+
 };
 const getPosts = async (uuid) => {
-  console.log(uuid);
+
   const posts = await Post.findAll({ where: { author_uuid: uuid } });
   if (post.length < 1) throw new AppError("no posts found", 400);
   return posts;
 };
 const singlePost = async (uuid) => {
   const posts = await Post.findOne({ where: { uuid: uuid } });
-  console.log(posts);
+
   if (!post) throw new AppError("no posts found", 400);
   return posts;
 };

@@ -3,6 +3,7 @@ const AppError = require("../utils/appError");
 const { Op } = require("sequelize");
 
 const { User, FriendRequests, Friends } = require("../models");
+const friends = require("../models/friends");
 
 const sendFriendRequest = async (sender, receiver) => {
   const sender_uuid = sender.uuid;
@@ -79,8 +80,53 @@ const deleteFriend = async (user, uuid) => {
   await friend.destroy();
 };
 
+const searchFriend = async (query, uuid) => {
+  // const user = await Friends.findAll({
+  //   where: {
+  //     [Op.or]: [{ sender_uuid: uuid }, { receiver_uuid: uuid }],
+  //   },
+  //   include: [
+  //     {
+  //       model: User,
+  //       where: {},
+  //       as: "receiver",
+  //     },
+  //     {
+  //       model: User,
+
+  //       as: "sender",
+  //     },
+  //   ],
+  // });
+  const user = await User.findAll({
+    attributes: ["name", "uuid", "avatar"],
+    where: {
+      uuid,
+    },
+    include: [
+      {
+        model: User,
+
+        as: "receivedFriends",
+      },
+      {
+        model: User,
+
+        as: "sentFriends",
+      },
+    ],
+    where: {
+      name: {
+        [Op.like]: "%" + query.name + "%",
+      },
+    },
+  });
+  return user;
+};
+
 module.exports = {
   sendFriendRequest,
   deleteFriend,
   responseFriendRequest,
+  searchFriend,
 };

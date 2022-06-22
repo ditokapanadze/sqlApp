@@ -2,6 +2,7 @@ const {
   sendFriendRequest,
   responseFriendRequest,
   deleteFriend,
+  searchFriend,
 } = require("../services/friendServices.js");
 
 exports.sendFriendRequest = async (req, res, next) => {
@@ -36,4 +37,10 @@ exports.deleteFriend = async (req, res, next) => {
   const response = await deleteFriend(user, uuid);
 
   res.status(200).json({ msg: "friend deleted" });
+};
+exports.searchFriend = async (req, res, next) => {
+  const query = req.query;
+  const uuid = req.user.uuid;
+  const friends = await searchFriend(query, uuid);
+  res.status(200).json(friends);
 };
