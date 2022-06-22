@@ -134,16 +134,24 @@ const responseFriendRequest = async (sender_uuid, receiver_uuid, confirm) => {
 };
 
 const changeAvatar = async (user_uuid, photoUrl) => {
-  console.log(user_uuid);
-  console.log(photoUrl);
   const user = await User.findOne({ where: { uuid: user_uuid } });
 
   if (!user) {
     throw new AppError(`Friend already added`, 400);
   }
-  console.log(user);
+
   user.avatar = photoUrl;
   await user.save();
+};
+
+const getUser = async (uuid) => {
+  const user = await User.findOne({
+    where: {
+      uuid,
+    },
+  });
+
+  return user;
 };
 
 module.exports = {
@@ -153,5 +161,6 @@ module.exports = {
   passwordReset,
   sendFriendRequest,
   responseFriendRequest,
+  getUser,
   changeAvatar,
 };

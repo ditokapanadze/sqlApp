@@ -7,11 +7,10 @@ const {
   deleteSession,
 } = require("../services/authServices.js");
 const { signJWT, verifyJWT } = require("../utils/jwt");
-const { invalidateSession } = require("../sessions");
 
 exports.register = async (req, res, next) => {
   const userData = req.body;
-  console.log(userData);
+
   const token = await register(userData);
 
   res.status(200).json({ token });
@@ -19,7 +18,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   const userData = req.body;
   const { accessToken, refreshToken, user } = await login(userData);
-  // console.log(accessToken, user);
+
   res.cookie("accessToken", accessToken, {
     // maxAge: 300000, // 5 min
     httpOnly: true,

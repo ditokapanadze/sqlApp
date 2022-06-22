@@ -1,15 +1,13 @@
 const { signJWT, verifyJWT } = require("../utils/jwt");
 const { User, RefreshToken } = require("../models");
-const { getSession } = require("../sessions");
 const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");
-const deserializeUser = async (req, res, next) => {
+const verifyUser = async (req, res, next) => {
   const { accessToken, refreshToken } = req.cookies;
 
   if (!accessToken) {
     return next();
   }
-  // const { payload, expired } = verifyJWT(accessToken);
 
   try {
     const decoded = jwt.verify(accessToken, process.env.SECRET_KEY);
@@ -35,7 +33,7 @@ const deserializeUser = async (req, res, next) => {
       if (!user) {
         throw new AppError(`user not found`, 404);
       }
-      console.log("exla aq");
+
       const compare = user.refreshTokens.some(
         (token) => token.refreshToken == refreshToken,
       );
@@ -58,37 +56,9 @@ const deserializeUser = async (req, res, next) => {
         return next();
       }
     } catch (err) {
-      console.log(err);
       return next();
     }
   }
-
-  // console.log(decoded);
-  // // for a valid access token
-  // if (payload) {
-  //   req.user = payload;
-  //   return next();
-  // }
-
-  // // expired but valid access token
-  // const { payload: refresh } =
-  //   expired && refreshToken ? verifyJWT(refreshToken) : { payload: null };
-  // console.log(refresh);
-  // if (!refresh) {
-  //   return next();
-  // }
-
-  // const session = getSession(refresh.sessionId);
-
-  // if (!session) {
-  //   return next();
-  // }
-  // const newAccessToken = signJWT(session, "10s");
-  // res.cookie("accessToken", newAccessToken, {
-  //   // maxAge: 30000,
-  //   httpOnly: true,
-  // });
-  // req.user = verifyJWT(newAccessToken).payload;
 };
 
-module.exports = deserializeUser;
+module.exports = verifyUser;

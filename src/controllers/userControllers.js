@@ -6,6 +6,7 @@ const {
   responseFriendRequest,
   sendFriendRequest,
   changeAvatar,
+  getUser,
 } = require("../services/userServices.js");
 
 exports.searchUser = async (req, res, next) => {
@@ -67,4 +68,11 @@ exports.changeAvatar = async (req, res, next) => {
   const response = await changeAvatar(user_uuid, photoUrl);
 
   res.status(200).json({ msg: "Avatar changed" });
+};
+
+exports.getUser = async (req, res, next) => {
+  const uuid = req.user.uuid;
+
+  const user = await getUser(uuid);
+  res.status(200).json(user);
 };

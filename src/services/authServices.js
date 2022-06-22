@@ -6,7 +6,6 @@ const mailer = require("nodemailer");
 const AppError = require("../utils/appError");
 const sendEmail = require("../utils/mailer.js");
 const { signJWT, verifyJWT } = require("../utils/jwt");
-const { createSession } = require("../sessions");
 
 const register = async (userData) => {
   const { email, name, password, repassword } = userData;
