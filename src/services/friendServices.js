@@ -3,7 +3,7 @@ const AppError = require("../utils/appError");
 const { Op } = require("sequelize");
 
 const { User, FriendRequests, Friends } = require("../models");
-const friends = require("../models/friends");
+const { getMethods } = require("../utils/helpers");
 
 const sendFriendRequest = async (sender, receiver) => {
   const sender_uuid = sender.uuid;
@@ -98,30 +98,34 @@ const searchFriend = async (query, uuid) => {
   //     },
   //   ],
   // });
-  const user = await User.findAll({
+
+  const user = await User.findOne({
     attributes: ["name", "uuid", "avatar"],
     where: {
       uuid,
     },
-    include: [
-      {
-        model: User,
-
-        as: "receivedFriends",
-      },
-      {
-        model: User,
-
-        as: "sentFriends",
-      },
-    ],
-    where: {
-      name: {
-        [Op.like]: "%" + query.name + "%",
-      },
-    },
+    // include: [
+    //   {
+    //     model: User,
+    //     where: {},
+    //     as: "receivedFriends",
+    //   },
+    //   {
+    //     model: User,
+    //     as: "sentFriends",
+    //   },
+    // ],
+    // where: {
+    //   name: {
+    //     [Op.like]: "%" + query.name + "%",
+    //   },
+    // },
   });
-  return user;
+
+  const friends = user.getReceivedFriends({});
+  const atr = getMethods(user);
+  console.log(atr);
+  return friends;
 };
 
 module.exports = {

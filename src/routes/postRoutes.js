@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { route } = require("express/lib/router");
 const {
   createPost,
   deletePost,
@@ -7,6 +8,8 @@ const {
   photoUpload,
   getPosts,
   singlePost,
+  SingleHashtag,
+  SimilarPosts,
 } = require("../controllers/postControllers");
 const requireUser = require("../middlewares/requireUser");
 
@@ -25,7 +28,10 @@ router.put("/:uuid", requireUser, updatePost);
 router.get("/", getAll);
 //get all posts with user uuid
 router.get("/getposts", requireUser, getPosts);
-// get single post by uuid
+
+// single hashtag search
+router.get("/hashtag", SingleHashtag);
+router.get("/hashtags", SimilarPosts);
+router.post("/photoupload", photoUpload); // get single post by uuid
 router.get("/:uuid", singlePost);
-router.post("/photoupload", photoUpload);
 module.exports = router;

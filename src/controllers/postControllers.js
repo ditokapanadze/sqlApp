@@ -6,11 +6,14 @@ const {
   photoUpload,
   getPosts,
   singlePost,
+  SingleHashtag,
+  SimilarPosts,
 } = require("../services/postServices.js");
 
 exports.createPost = async (req, res, next) => {
   const postData = req.body;
   const uuid = req.user.uuid;
+  console.log(postData);
 
   const post = await createPost(postData, uuid);
 
@@ -60,4 +63,18 @@ exports.singlePost = async (req, res, next) => {
   const posts = await singlePost(uuid);
 
   res.status(200).json(posts);
+};
+exports.SingleHashtag = async (req, res, next) => {
+  const hashtag = req.query.hashtag;
+
+  const posts = await SingleHashtag(hashtag);
+
+  res.status(200).json(posts);
+};
+exports.SimilarPosts = async (req, res, next) => {
+  const { hashtag1, hashtag2, hashtag3 } = req.query;
+
+  const similarPosts = await SimilarPosts(hashtag1, hashtag2, hashtag3);
+
+  res.status(200).json(similarPosts);
 };

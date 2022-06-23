@@ -1,16 +1,25 @@
 const AppError = require("../utils/appError");
-const { Post } = require("../models");
-
+const { Post, Hashtag } = require("../models");
+const { getMethods } = require("../utils/helpers");
+const { Op } = require("sequelize");
 const post = require("../models/post");
 
 const createPost = async (postData, uuid) => {
-  const { title, description } = postData;
+  const { title, description, hashtags } = postData;
 
-  const post = await Post.create({ title, description, author_uuid: uuid });
+  let post = await Post.create({ title, description, author_uuid: uuid });
+  if (hashtags.length > 0) {
+    const hashtag = await Hashtag.create({
+      hashtag_1: hashtags[0],
+      hashtag_2: hashtags[1] ? hashtags[1] : null,
+      hashtag_3: hashtags[2] ? hashtags[2] : null,
+      post_uuid: post.uuid,
+    });
+  }
+
   return post;
 };
 const deletePost = async (postUUID, user) => {
-
   const post = await Post.findOne({
     where: { uuid: postUUID, author_uuid: user.uuid },
   });
@@ -53,28 +62,139 @@ const getAll = async () => {
 
   return posts;
 };
-const photoUpload = async (x) => {
-
-};
+const photoUpload = async (x) => {};
 const getPosts = async (uuid) => {
-
   const posts = await Post.findAll({ where: { author_uuid: uuid } });
   if (post.length < 1) throw new AppError("no posts found", 400);
+
   return posts;
 };
 const singlePost = async (uuid) => {
-  const posts = await Post.findOne({ where: { uuid: uuid } });
+  let posts = await Post.findOne({
+    where: { uuid: uuid },
+    include: [{ model: Hashtag, as: "hashtags" }],
+  });
 
   if (!post) throw new AppError("no posts found", 400);
+
   return posts;
+};
+
+const SingleHashtag = async (hashtag) => {
+  // const posts = await Hashtag.findAll({
+  //   where: {
+  //     [Op.or]: [
+  //       { hashtag_1: hashtag },
+  //       { hashtag_2: hashtag },
+  //       { hashtag_2: hashtag },
+  //     ],
+  //   },
+  //   include: [{ model: Post, as: "post" }],
+  // });
+  const posts = await Post.findAll({
+    include: [
+      {
+        model: Hashtag,
+        where: {
+          [Op.or]: [
+            { hashtag_1: hashtag },
+            { hashtag_2: hashtag },
+            { hashtag_2: hashtag },
+          ],
+        },
+        as: "hashtags",
+      },
+    ],
+  });
+  return posts;
+};
+
+const SimilarPosts = async (hashtag1, hashtag2, hashtag3) => {
+  const similarPosts = [];
+  const posts = await Post.findAll({
+    include: [
+      {
+        model: Hashtag,
+        where: {
+          [Op.or]: [
+            { hashtag_1: hashtag1 },
+            { hashtag_2: hashtag1 },
+            { hashtag_3: hashtag1 },
+          ],
+          [Op.and]: {
+            [Op.or]: [
+              { hashtag_1: hashtag2 },
+              { hashtag_2: hashtag2 },
+              { hashtag_3: hashtag2 },
+            ],
+          },
+          [Op.and]: {
+            [Op.or]: [
+              { hashtag_1: hashtag3 },
+              { hashtag_2: hashtag3 },
+              { hashtag_3: hashtag3 },
+            ],
+          },
+        },
+        as: "hashtags",
+      },
+    ],
+  });
+  similarPosts.push(...posts);
+  if (similarPosts.length < 4) {
+    const posts = await Post.findAll({
+      include: [
+        {
+          model: Hashtag,
+          where: {
+            [Op.or]: [
+              { hashtag_1: hashtag1 },
+              { hashtag_2: hashtag1 },
+              { hashtag_3: hashtag1 },
+            ],
+            [Op.and]: {
+              [Op.or]: [
+                { hashtag_1: hashtag2 },
+                { hashtag_2: hashtag2 },
+                { hashtag_3: hashtag2 },
+              ],
+            },
+          },
+          as: "hashtags",
+        },
+      ],
+    });
+    similarPosts.push(...posts);
+  }
+  if (similarPosts.length < 4) {
+    const posts = await Post.findAll({
+      include: [
+        {
+          model: Hashtag,
+          where: {
+            [Op.or]: [
+              { hashtag_1: hashtag1 },
+              { hashtag_2: hashtag1 },
+              { hashtag_3: hashtag1 },
+            ],
+          },
+          as: "hashtags",
+        },
+      ],
+    });
+    similarPosts.push(...posts);
+  }
+  return similarPosts;
 };
 
 module.exports = {
   createPost,
   deletePost,
   updatePost,
+  SingleHashtag,
   getAll,
   photoUpload,
   getPosts,
   singlePost,
+  SimilarPosts,
 };
