@@ -1,6 +1,6 @@
 const AppError = require("../utils/appError");
-
-const { Op } = require("sequelize");
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 const { User, FriendRequests, Friends } = require("../models");
 const { getMethods } = require("../utils/helpers");
@@ -81,50 +81,59 @@ const deleteFriend = async (user, uuid) => {
 };
 
 const searchFriend = async (query, uuid) => {
-  // const user = await Friends.findAll({
-  //   where: {
-  //     [Op.or]: [{ sender_uuid: uuid }, { receiver_uuid: uuid }],
-  //   },
-  //   include: [
-  //     {
-  //       model: User,
-  //       where: {},
-  //       as: "receiver",
-  //     },
-  //     {
-  //       model: User,
-
-  //       as: "sender",
-  //     },
-  //   ],
-  // });
-
-  const user = await User.findOne({
-    attributes: ["name", "uuid", "avatar"],
+  const friends = [];
+  const sendFriends = await Friends.findAll({
+    attributes: [],
     where: {
-      uuid,
+      [Op.or]: [{ sender_uuid: uuid }, { receiver_uuid: uuid }],
     },
-    // include: [
-    //   {
-    //     model: User,
-    //     where: {},
-    //     as: "receivedFriends",
-    //   },
-    //   {
-    //     model: User,
-    //     as: "sentFriends",
-    //   },
-    // ],
-    // where: {
-    //   name: {
-    //     [Op.like]: "%" + query.name + "%",
-    //   },
-    // },
+    include: [
+      {
+        model: User,
+        where: {
+          uuid: {
+            [Op.ne]: uuid,
+          },
+          [Op.and]: {
+            name: {
+              [Op.like]: "%" + query.name + "%",
+            },
+          },
+        },
+        attributes: ["name", "avatar", "uuid"],
+        as: "sender",
+      },
+    ],
   });
+  friends.push(...sendFriends);
+  const receivedFriends = await Friends.findAll({
+    attributes: [],
+    where: {
+      [Op.or]: [{ sender_uuid: uuid }, { receiver_uuid: uuid }],
+    },
+    include: [
+      {
+        model: User,
+        where: {
+          uuid: {
+            [Op.ne]: uuid,
+          },
+          // name: {
+          //   [Op.like]: query.name,
+          // },
+          [Op.and]: {
+            name: {
+              [Op.like]: "%" + query.name + "%",
+            },
+          },
+        },
+        attributes: ["name", "avatar", "uuid"],
+        as: "receiver",
+      },
+    ],
+  });
+  friends.push(...receivedFriends);
 
-  const friends = user.getReceivedFriends({});
-  const atr = getMethods(user);
-  console.log(atr);
   return friends;
 };
 

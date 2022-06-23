@@ -13,25 +13,36 @@ module.exports = (sequelize, DataTypes) => {
         sourceKey: "uuid",
         as: "refreshTokens",
       });
-      this.belongsToMany(User, {
-        through: FriendRequests,
-        as: "sentRequests",
+      // ესენი მგონი გადასაკეთებელია
+      // this.belongsToMany(User, {
+      //   through: FriendRequests,
+      //   as: "sentRequests",
+      //   foreignKey: "sender_uuid",
+      // });
+      // this.belongsToMany(User, {
+      //   through: FriendRequests,
+      //   as: "receivedRequests",
+      //   foreignKey: "receiver_uuid",
+      // });
+      // this.belongsToMany(User, {
+      //   through: Friends,
+      //   as: "sentFriends",
+      //   foreignKey: "sender_uuid",
+      // });
+      // this.belongsToMany(User, {
+      //   through: Friends,
+      //   as: "receivedFriends",
+      //   foreignKey: "receiver_uuid",
+      // });
+      this.hasMany(Friends, {
         foreignKey: "sender_uuid",
-      });
-      this.belongsToMany(User, {
-        through: FriendRequests,
-        as: "receivedRequests",
-        foreignKey: "receiver_uuid",
-      });
-      this.belongsToMany(User, {
-        through: Friends,
+        sourceKey: "uuid",
         as: "sentFriends",
-        foreignKey: "sender_uuid",
       });
-      this.belongsToMany(User, {
-        through: Friends,
-        as: "receivedFriends",
+      this.hasMany(Friends, {
         foreignKey: "receiver_uuid",
+        sourceKey: "uuid",
+        as: "receivedFriends",
       });
     }
     toJSON() {
