@@ -21,13 +21,14 @@ exports.responseFriendRequest = async (req, res, next) => {
   const response = await responseFriendRequest(
     sender_uuid,
     receiver_uuid,
-    confirm,
+    confirm
   );
-  if (response) {
-    res.status(200).json({ msg: "friend added" });
-  } else {
-    res.status(200).json({ msg: "friend request declined" });
+
+  if (!response) {
+    return res.status(200).json({ msg: "friend request declined" });
   }
+
+  res.status(200).json({ msg: "friend added" });
 };
 
 exports.deleteFriend = async (req, res, next) => {
