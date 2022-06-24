@@ -18,20 +18,7 @@ router.delete("/session", requireUser, deleteSessionHandler);
 
 router.post("/login", validatorMiddleware(loginValidation), login);
 router.get("/verification/:token", verification);
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["email", "profile"] }),
-);
 
-router.get(
-  "google/callback",
-
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect("/");
-  },
-);
 // resend verifications mail
 router.get("/verificationrequest/:uuid", verificationReq);
 

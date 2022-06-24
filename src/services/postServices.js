@@ -1,6 +1,6 @@
 const AppError = require("../utils/appError");
 const { Post, Hashtag } = require("../models");
-const { getMethods } = require("../utils/helpers");
+
 const { Op } = require("sequelize");
 const post = require("../models/post");
 
@@ -8,16 +8,15 @@ const createPost = async (postData, uuid) => {
   const { title, description, hashtags } = postData;
 
   let post = await Post.create({ title, description, author_uuid: uuid });
-  if (hashtags.length > 0) {
-    const hashtag = await Hashtag.create({
-      hashtag_1: hashtags[0],
-      hashtag_2: hashtags[1] ? hashtags[1] : null,
-      hashtag_3: hashtags[2] ? hashtags[2] : null,
-      post_uuid: post.uuid,
-    });
-  }
 
-  return post;
+  if (hashtags.length < 0) return post;
+
+  await Hashtag.create({
+    hashtag_1: hashtags[0],
+    hashtag_2: hashtags[1] ? hashtags[1] : null,
+    hashtag_3: hashtags[2] ? hashtags[2] : null,
+    post_uuid: post.uuid,
+  });
 };
 const deletePost = async (postUUID, user) => {
   const post = await Post.findOne({
@@ -81,16 +80,6 @@ const singlePost = async (uuid) => {
 };
 
 const SingleHashtag = async (hashtag) => {
-  // const posts = await Hashtag.findAll({
-  //   where: {
-  //     [Op.or]: [
-  //       { hashtag_1: hashtag },
-  //       { hashtag_2: hashtag },
-  //       { hashtag_2: hashtag },
-  //     ],
-  //   },
-  //   include: [{ model: Post, as: "post" }],
-  // });
   const posts = await Post.findAll({
     include: [
       {

@@ -3,7 +3,6 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 const { User, FriendRequests, Friends } = require("../models");
-const { getMethods } = require("../utils/helpers");
 
 const sendFriendRequest = async (sender, receiver) => {
   const sender_uuid = sender.uuid;
@@ -35,22 +34,7 @@ const sendFriendRequest = async (sender, receiver) => {
 };
 
 const responseFriendRequest = async (sender_uuid, receiver_uuid, confirm) => {
-  if (confirm) {
-    const checkFriend = await Friends.findOne({
-      where: { sender_uuid, receiver_uuid },
-    });
-    if (checkFriend) {
-      throw new AppError(`Friend already added`, 400);
-    }
-
-    const friend = await Friends.create({ sender_uuid, receiver_uuid });
-    const request = await FriendRequests.findOne({
-      sender_uuid,
-      receiver_uuid,
-    });
-    await request.destroy();
-    return true;
-  } else {
+  if (!confirm) {
     const request = await FriendRequests.findOne({
       sender_uuid,
       receiver_uuid,
@@ -58,6 +42,44 @@ const responseFriendRequest = async (sender_uuid, receiver_uuid, confirm) => {
     await request.destroy();
     return false;
   }
+  const checkFriend = await Friends.findOne({
+    where: { sender_uuid, receiver_uuid },
+  });
+  if (checkFriend) {
+    throw new AppError(`Friend already added`, 400);
+  }
+
+  await Friends.create({ sender_uuid, receiver_uuid });
+  const request = await FriendRequests.findOne({
+    sender_uuid,
+    receiver_uuid,
+  });
+  await request.destroy();
+  return true;
+
+  // if (confirm) {
+  //   const checkFriend = await Friends.findOne({
+  //     where: { sender_uuid, receiver_uuid },
+  //   });
+  //   if (checkFriend) {
+  //     throw new AppError(`Friend already added`, 400);
+  //   }
+
+  //   await Friends.create({ sender_uuid, receiver_uuid });
+  //   const request = await FriendRequests.findOne({
+  //     sender_uuid,
+  //     receiver_uuid,
+  //   });
+  //   await request.destroy();
+  //   return true;
+  // } else {
+  //   const request = await FriendRequests.findOne({
+  //     sender_uuid,
+  //     receiver_uuid,
+  //   });
+  //   await request.destroy();
+  //   return false;
+  // }
 };
 
 const deleteFriend = async (user, uuid) => {

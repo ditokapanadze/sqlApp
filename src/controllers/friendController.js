@@ -9,7 +9,7 @@ exports.sendFriendRequest = async (req, res, next) => {
   const receiver = req.params;
   const sender = req.user;
 
-  const response = await sendFriendRequest(sender, receiver);
+  await sendFriendRequest(sender, receiver);
 
   res.status(200).json({ msg: "friend request sent" });
 };
@@ -34,7 +34,7 @@ exports.deleteFriend = async (req, res, next) => {
   const user = req.user;
   const uuid = req.params.uuid;
 
-  const response = await deleteFriend(user, uuid);
+  await deleteFriend(user, uuid);
 
   res.status(200).json({ msg: "friend deleted" });
 };

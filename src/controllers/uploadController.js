@@ -1,4 +1,4 @@
-const { upload, uploadRequest } = require("../services/uploadServices.js");
+const { upload } = require("../services/uploadServices.js");
 
 exports.upload = async (req, res, next) => {
   const user = req.user;

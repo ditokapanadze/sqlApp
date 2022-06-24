@@ -23,7 +23,7 @@ exports.getAll = async (req, res, next) => {
 
 exports.resetRequest = async (req, res, next) => {
   const email = req.params.email;
-  const response = await resetRequest(email);
+  await resetRequest(email);
 
   res.status(200).json({ msg: "email sent" });
 };
@@ -32,7 +32,7 @@ exports.passwordReset = async (req, res, next) => {
   const token = req.params.token;
 
   const password = req.body.password;
-  const response = await passwordReset(token, password);
+  await passwordReset(token, password);
 
   res.status(200).json({ msg: "password changed" });
 };
@@ -41,7 +41,7 @@ exports.sendFriendRequest = async (req, res, next) => {
   const receiver = req.params;
   const sender = req.user;
 
-  const response = await sendFriendRequest(sender, receiver);
+  await sendFriendRequest(sender, receiver);
 
   res.status(200).json({ msg: "friend request sent" });
 };
@@ -65,7 +65,7 @@ exports.responseFriendRequest = async (req, res, next) => {
 exports.changeAvatar = async (req, res, next) => {
   const user_uuid = req.user.uuid;
   const { photoUrl } = req.body;
-  const response = await changeAvatar(user_uuid, photoUrl);
+  await changeAvatar(user_uuid, photoUrl);
 
   res.status(200).json({ msg: "Avatar changed" });
 };

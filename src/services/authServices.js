@@ -67,10 +67,6 @@ const login = async (userData) => {
     throw new AppError(`password or email is incorrect`, 401);
   }
 
-  // create session
-  // const session = createSession(email, user.name);
-
-  // access token
   const accessToken = signJWT(
     {
       email: user.email,
@@ -83,7 +79,7 @@ const login = async (userData) => {
   // refresh toke
   const refreshToken = signJWT({ uuid: user.uuid, type_refresh: true }, "1y");
 
-  const newRefresh = await RefreshToken.create({
+  await RefreshToken.create({
     refreshToken,
     owner_uuid: user.uuid,
   });

@@ -3,10 +3,9 @@ const {
   login,
   verification,
   verificationReq,
-  getSessionHandler,
+
   deleteSession,
 } = require("../services/authServices.js");
-const { signJWT, verifyJWT } = require("../utils/jwt");
 
 exports.register = async (req, res, next) => {
   const userData = req.body;
@@ -32,14 +31,14 @@ exports.login = async (req, res, next) => {
 
 exports.verification = async (req, res, next) => {
   const { token } = req.params;
-  const response = await verification(token);
+  await verification(token);
 
   res.status(200).json({ msg: "Account verified successfully" });
 };
 
 exports.verificationReq = async (req, res, next) => {
   const { uuid } = req.params;
-  const response = await verificationReq(uuid);
+  await verificationReq(uuid);
 
   res.status(200).json({ msg: "Verification mail sent" });
 };
@@ -51,7 +50,7 @@ exports.getSessionHandler = async (req, res, next) => {
 
 exports.deleteSessionHandler = async (req, res, next) => {
   const user = req.user;
-  const { accessToken, refreshToken } = req.cookies;
+  const { refreshToken } = req.cookies;
   res.cookie("accessToken", "", {
     maxAge: 0,
     httpOnly: true,
@@ -60,6 +59,6 @@ exports.deleteSessionHandler = async (req, res, next) => {
     maxAge: 0,
     httpOnly: true,
   });
-  const session = deleteSession(user, refreshToken);
+  await deleteSession(user, refreshToken);
   return res.json({ msg: "log out" });
 };
