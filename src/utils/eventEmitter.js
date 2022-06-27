@@ -3,6 +3,7 @@ const emitter = new EventEmitter2();
 
 const events = {
   test: "test",
+  trigger: "trigger",
 };
 
 module.exports = {

@@ -26,16 +26,16 @@ module.exports = (sequelize, DataTypes) => {
         as: "refreshTokens",
       });
       // ესენი მგონი გადასაკეთებელია
-      // this.belongsToMany(User, {
-      //   through: FriendRequests,
-      //   as: "sentRequests",
-      //   foreignKey: "sender_uuid",
-      // });
-      // this.belongsToMany(User, {
-      //   through: FriendRequests,
-      //   as: "receivedRequests",
-      //   foreignKey: "receiver_uuid",
-      // });
+      this.belongsToMany(User, {
+        through: FriendRequests,
+        as: "sentRequests",
+        foreignKey: "sender_uuid",
+      });
+      this.belongsToMany(User, {
+        through: FriendRequests,
+        as: "receivedRequests",
+        foreignKey: "receiver_uuid",
+      });
       // this.belongsToMany(User, {
       //   through: Friends,
       //   as: "sentFriends",

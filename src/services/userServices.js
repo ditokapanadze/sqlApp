@@ -1,12 +1,13 @@
 const AppError = require("../utils/appError");
 const Sequelize = require("sequelize");
-
+const { emitter, events } = require("../utils/eventEmitter");
 const Op = Sequelize.Op;
 
 const { User, Post, FriendRequests, Friends, Media } = require("../models");
 const crypto = require("crypto");
 const sendEmail = require("../utils/mailer.js");
 const bcrypt = require("bcryptjs");
+
 const searchUser = async (query) => {
   const user = await User.findAll({
     where: {

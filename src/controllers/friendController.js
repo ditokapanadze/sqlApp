@@ -8,6 +8,8 @@ const {
 exports.sendFriendRequest = async (req, res, next) => {
   const receiver = req.params;
   const sender = req.user;
+  console.log(receiver);
+  console.log(sender);
 
   await sendFriendRequest(sender, receiver);
 
@@ -21,7 +23,7 @@ exports.responseFriendRequest = async (req, res, next) => {
   const response = await responseFriendRequest(
     sender_uuid,
     receiver_uuid,
-    confirm
+    confirm,
   );
 
   if (!response) {

@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      uuid: {
+        type: DataTypes.UUID,
+        allowNull: null,
+        defaultValue: DataTypes.UUIDV4,
+      },
       notifier_user: { type: DataTypes.STRING, allowNull: false },
       type: { type: DataTypes.STRING, allowNull: false },
       seen: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },

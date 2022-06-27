@@ -2,18 +2,23 @@ const AppError = require("../utils/appError");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
-const { User, FriendRequests, Friends } = require("../models");
+const { User, FriendRequests, Friends, Notification } = require("../models");
+const logger = require("../logger/logger");
 
 const sendFriendRequest = async (sender, receiver) => {
   const sender_uuid = sender.uuid;
   const receiver_uuid = receiver.uuid;
-  console.log(receiver);
+  logger.info(sender);
+  logger.info(receiver);
   const user = await User.findOne({
     where: {
       uuid: receiver_uuid,
     },
     include: [{ model: User, as: "sentRequests" }],
   });
+  if (!user) {
+    throw new AppError(`user not found`, 400);
+  }
   if (user.uuid === sender.uuid) {
     throw new AppError(`you can not send friend request to yourself`, 400);
   }
@@ -23,12 +28,18 @@ const sendFriendRequest = async (sender, receiver) => {
       receiver_uuid,
     },
   });
+  // TODO: უნდა შემოწმდეს მეგობრებში ხო არ ყავს უკვე
   if (checkRequest) {
     throw new AppError(`friend request already sent`, 400);
   }
   const newFriendRequest = await FriendRequests.create({
     sender_uuid,
     receiver_uuid,
+  });
+  await Notification.create({
+    target_user: receiver.uuid,
+    notifier_user: sender.uuid,
+    type: "FRIEND REQUEST",
   });
   return newFriendRequest;
 };
