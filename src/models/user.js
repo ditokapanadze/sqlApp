@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
         sourceKey: "uuid",
         as: "media",
       });
+      this.hasOne(Media, {
+        foreignKey: "author_uuid",
+        sourceKey: "uuid",
+        as: "avatar",
+      });
       this.hasMany(RefreshToken, {
         foreignKey: "owner_uuid",
         sourceKey: "uuid",
@@ -122,11 +127,11 @@ module.exports = (sequelize, DataTypes) => {
           isEmail: { msg: "please use a valid email address" },
         },
       },
-      avatar: {
-        type: DataTypes.STRING,
-        defaultValue:
-          "https://image.shutterstock.com/image-vector/creative-vector-illustration-default-avatar-260nw-779277895.jpg",
-      },
+      // avatar: {
+      //   type: DataTypes.STRING,
+      //   defaultValue:
+      //     "https://image.shutterstock.com/image-vector/creative-vector-illustration-default-avatar-260nw-779277895.jpg",
+      // },
       role: {
         type: DataTypes.STRING,
         allowNull: false,
