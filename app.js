@@ -9,6 +9,7 @@ const routes = require("./src/routes");
 
 app.use(cookieParser());
 const cors = require("cors");
+const { emitter, events } = require("./src/utils/eventEmitter");
 
 app.use(
   cors({
@@ -18,8 +19,13 @@ app.use(
     credentials: true,
   }),
 );
-app.use(verifyUser);
+emitter.on(events.test, (num) => {
+  console.log(num);
+});
+
+emitter.emit(events.test, 3);
 app.use(express.json());
+app.use(verifyUser);
 app.use("/api/v1", routes);
 app.use(globalErrorHandler);
 module.exports = app;

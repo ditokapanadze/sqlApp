@@ -3,7 +3,7 @@ const Sequelize = require("sequelize");
 
 const Op = Sequelize.Op;
 
-const { User, Post, FriendRequests, Friends } = require("../models");
+const { User, Post, FriendRequests, Friends, Media } = require("../models");
 const crypto = require("crypto");
 const sendEmail = require("../utils/mailer.js");
 const bcrypt = require("bcryptjs");
@@ -16,7 +16,7 @@ const searchUser = async (query) => {
     },
     include: [
       { model: Post, as: "posts" },
-      { model: User, as: "sentRequests" },
+      { model: Media, as: "media" },
     ],
   });
   // if (user.length < 1) resetrequest;

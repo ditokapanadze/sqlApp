@@ -1,7 +1,8 @@
 require("dotenv").config();
 const app = require("./app");
-
+const logger = require("./src/logger/logger");
 const { sequelize, User, Post } = require("./src/models");
+require("./src/utils/eventEmitter");
 
 const port = process.env.PORT || 8000;
 
@@ -13,7 +14,7 @@ const main = async () => {
     //postgres connection
     sequelize
       .authenticate()
-      .then(() => console.log("DB connected"))
+      .then(() => logger.info("DB connected"))
       .catch((err) => {
         console.error("Unable to connect to the DB:", err);
       });
