@@ -3,13 +3,17 @@ require("express-async-errors");
 const cookieParser = require("cookie-parser");
 const verifyUser = require("./src/middlewares/verifyUser");
 const app = express();
-
+const socket = require("./socket.js");
 const globalErrorHandler = require("./src/middlewares/errorMiddleware.js");
 const routes = require("./src/routes");
+const http = require("http");
 
+const server = http.createServer(app);
 app.use(cookieParser());
 const cors = require("cors");
-const { emitter, events } = require("./src/utils/eventEmitter");
+const logger = require("./src/logger/logger");
+
+socket(server);
 
 app.use(
   cors({
@@ -19,13 +23,9 @@ app.use(
     credentials: true,
   }),
 );
-emitter.on(events.test, (num) => {
-  console.log(num);
-});
 
-emitter.emit(events.test, 3);
 app.use(express.json());
 app.use(verifyUser);
 app.use("/api/v1", routes);
 app.use(globalErrorHandler);
-module.exports = app;
+module.exports = server;

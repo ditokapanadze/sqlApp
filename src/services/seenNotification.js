@@ -19,6 +19,17 @@ const seenNotification = async (uuid) => {
   return notification;
 };
 
+const getNotifications = async (uuid) => {
+  console.log(uuid);
+  const notifications = await Notification.findAll({
+    where: {
+      target_user: uuid,
+    },
+  });
+  return notifications;
+};
+
 module.exports = {
   seenNotification,
+  getNotifications,
 };
