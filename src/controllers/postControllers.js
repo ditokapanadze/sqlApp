@@ -39,7 +39,8 @@ exports.updatePost = async (req, res, next) => {
 };
 
 exports.getAll = async (req, res, next) => {
-  const posts = await getAll();
+  const query = req.query;
+  const posts = await getAll(query);
 
   res.status(200).json(posts);
 };
@@ -50,7 +51,7 @@ exports.photoUpload = async (req, res, next) => {
 };
 exports.getPosts = async (req, res, next) => {
   const uuid = req.user.uuid;
-  console.log("post controler");
+
   const posts = await getPosts(uuid);
 
   res.status(200).json(posts);

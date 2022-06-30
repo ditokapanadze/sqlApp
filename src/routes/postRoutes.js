@@ -24,7 +24,7 @@ router.delete("/:uuid", requireUser, deletePost);
 // put "/api/v1/posts/:uuid"
 router.put("/:uuid", requireUser, updatePost);
 
-// get all post with users
+// get all post with users, or paginate if parameters exist
 router.get("/", getAll);
 //get all posts with user uuid
 router.get("/getposts", requireUser, getPosts);

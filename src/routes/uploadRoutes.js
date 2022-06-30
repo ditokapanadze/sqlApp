@@ -3,6 +3,6 @@ const { upload } = require("../controllers/uploadController");
 
 const requireUser = require("../middlewares/requireUser");
 
-router.post("/", requireUser, upload);
+router.post("/:type", requireUser, upload);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const AppError = require("../utils/appError");
-const { Post, Hashtag } = require("../models");
+const { Post, Hashtag, User, PostLike } = require("../models");
 
 const { Op } = require("sequelize");
 const post = require("../models/post");
@@ -55,13 +55,25 @@ const updatePost = async (postData, uuid, user) => {
   return post;
 };
 
-const getAll = async () => {
-  const posts = await Post.findAll({ include: "user" });
-  if (post.length < 1) throw new AppError("no posts found", 400);
-
+const getAll = async (query) => {
+  const { limit, page } = query;
+  console.log(typeof limit);
+  if (!limit && !page) {
+    const posts = await Post.findAndCountAll({ include: "user" });
+    if (post.length < 1) throw new AppError("no posts found", 400);
+    return posts;
+  }
+  const posts = await Post.findAndCountAll({
+    limit: limit * 1,
+    offset: limit * page,
+    include: [
+      { model: User, as: "user" },
+      { model: PostLike, as: "likes" },
+    ],
+  });
   return posts;
 };
-const photoUpload = async (x) => {};
+
 const getPosts = async (uuid) => {
   const posts = await Post.findAll({ where: { author_uuid: uuid } });
   if (post.length < 1) throw new AppError("no posts found", 400);
@@ -182,7 +194,7 @@ module.exports = {
   updatePost,
   SingleHashtag,
   getAll,
-  photoUpload,
+
   getPosts,
   singlePost,
   SimilarPosts,

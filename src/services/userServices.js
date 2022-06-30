@@ -3,10 +3,19 @@ const Sequelize = require("sequelize");
 const { emitter, events } = require("../utils/eventEmitter");
 const Op = Sequelize.Op;
 
-const { User, Post, FriendRequests, Friends, Media } = require("../models");
+const {
+  User,
+  Post,
+  FriendRequests,
+  PostLike,
+  Friends,
+  Media,
+  Avatar,
+} = require("../models");
 const crypto = require("crypto");
 const sendEmail = require("../utils/mailer.js");
 const bcrypt = require("bcryptjs");
+const avatar = require("../models/avatar");
 
 const searchUser = async (query) => {
   const user = await User.findAll({
@@ -134,22 +143,29 @@ const responseFriendRequest = async (sender_uuid, receiver_uuid, confirm) => {
   }
 };
 
-const changeAvatar = async (user_uuid, photoUrl) => {
-  const user = await User.findOne({ where: { uuid: user_uuid } });
+// const changeAvatar = async (user_uuid, photoUrl) => {
+//   const user = await User.findOne({ where: { uuid: user_uuid } });
 
-  if (!user) {
-    throw new AppError(`Friend already added`, 400);
-  }
+//   if (!user) {
+//     throw new AppError(`Friend already added`, 400);
+//   }
 
-  user.avatar = photoUrl;
-  await user.save();
-};
+//   user.avatar = photoUrl;
+//   await user.save();
+// };
 
 const getUser = async (uuid) => {
   const user = await User.findOne({
     where: {
       uuid,
     },
+    include: [
+      { model: Post, as: "posts" },
+      { model: Media, as: "media" },
+
+      { model: PostLike, as: "likes" },
+      { model: Avatar, as: "avatar" },
+    ],
   });
 
   return user;
@@ -163,5 +179,4 @@ module.exports = {
   sendFriendRequest,
   responseFriendRequest,
   getUser,
-  changeAvatar,
 };

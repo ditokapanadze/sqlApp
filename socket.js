@@ -20,12 +20,13 @@ const socket = (server) => {
       cors: { origin: "*" },
     });
 
-    io.on("connect", (socket) => {
+    io.on("connection", (socket) => {
       console.log(`user joined with socketId ${socket.id}`);
+
       socket.on("addUser", (uuid) => {
         addUser(uuid, socket.id);
-        console.log(users);
       });
+
       socket.on("disconnect", () => {
         removeUser(socket.id);
       });

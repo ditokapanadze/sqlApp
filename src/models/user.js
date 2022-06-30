@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       Media,
       FriendRequests,
       Friends,
+      PostLike,
+      Avatar,
     }) {
       this.hasMany(Post, {
         foreignKey: "author_uuid",
@@ -20,15 +22,20 @@ module.exports = (sequelize, DataTypes) => {
         sourceKey: "uuid",
         as: "media",
       });
-      this.hasOne(Media, {
-        foreignKey: "author_uuid",
+      this.hasMany(PostLike, {
+        foreignKey: "user_uuid",
         sourceKey: "uuid",
-        as: "avatar",
+        as: "likes",
       });
       this.hasMany(RefreshToken, {
         foreignKey: "owner_uuid",
         sourceKey: "uuid",
         as: "refreshTokens",
+      });
+      this.hasOne(Avatar, {
+        foreignKey: "author_uuid",
+        sourceKey: "uuid",
+        as: "avatar",
       });
       // ესენი მგონი გადასაკეთებელია
       this.belongsToMany(User, {

@@ -11,7 +11,6 @@ const http = require("http");
 const server = http.createServer(app);
 app.use(cookieParser());
 const cors = require("cors");
-const logger = require("./src/logger/logger");
 
 socket(server);
 

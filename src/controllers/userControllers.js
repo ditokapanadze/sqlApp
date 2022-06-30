@@ -62,13 +62,13 @@ exports.responseFriendRequest = async (req, res, next) => {
   }
 };
 
-exports.changeAvatar = async (req, res, next) => {
-  const user_uuid = req.user.uuid;
-  const { photoUrl } = req.body;
-  await changeAvatar(user_uuid, photoUrl);
+// exports.changeAvatar = async (req, res, next) => {
+//   const user_uuid = req.user.uuid;
+//   const { photoUrl } = req.body;
+//   await changeAvatar(user_uuid, photoUrl);
 
-  res.status(200).json({ msg: "Avatar changed" });
-};
+//   res.status(200).json({ msg: "Avatar changed" });
+// };
 
 exports.getUser = async (req, res, next) => {
   const uuid = req.user.uuid;
