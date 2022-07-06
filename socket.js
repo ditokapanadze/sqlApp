@@ -26,9 +26,10 @@ const socket = (server) => {
       socket.on("addUser", (uuid) => {
         addUser(uuid, socket.id);
       });
-
+      console.log(users);
       socket.on("disconnect", () => {
         removeUser(socket.id);
+        console.log("user disconnected");
       });
 
       socket.on("sendNotification", ({ senderUuid, receiverUuid, text }) => {

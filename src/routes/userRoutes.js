@@ -5,16 +5,19 @@ const {
   resetRequest,
   passwordReset,
   changeAvatar,
+  editInfo,
   getUser,
 } = require("../controllers/userControllers");
 
 const requireUser = require("../middlewares/requireUser");
-router.get("/", searchUser);
+router.get("/", requireUser, searchUser);
 // get logged in user
 router.get("/getuser", requireUser, getUser);
 router.get("/getall", getAll);
 router.get("/resetrequest/:email", resetRequest);
 router.put("/passwordreset/:token", passwordReset);
+
+router.put("/editinfo", requireUser, editInfo);
 // router.put("/changeavatar", requireUser, changeAvatar);
 
 module.exports = router;

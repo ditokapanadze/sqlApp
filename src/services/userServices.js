@@ -171,6 +171,25 @@ const getUser = async (uuid) => {
   return user;
 };
 
+const editInfo = async (uuid, info) => {
+  const { name, email } = info;
+  const user = await User.findOne({
+    where: {
+      uuid,
+    },
+  });
+  if (!user) {
+    throw new AppError(`user not found`, 400);
+  }
+  user.set({
+    ...(name && { name }),
+    ...(email && { email }),
+  });
+
+  await user.save();
+  return user;
+};
+
 module.exports = {
   searchUser,
   getAll,
@@ -179,4 +198,5 @@ module.exports = {
   sendFriendRequest,
   responseFriendRequest,
   getUser,
+  editInfo,
 };

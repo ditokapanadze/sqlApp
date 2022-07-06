@@ -7,11 +7,11 @@ const socket = require("./socket.js");
 const globalErrorHandler = require("./src/middlewares/errorMiddleware.js");
 const routes = require("./src/routes");
 const http = require("http");
-
+const client = require("./src/config/redis");
 const server = http.createServer(app);
 app.use(cookieParser());
 const cors = require("cors");
-
+console.log(client);
 socket(server);
 
 app.use(

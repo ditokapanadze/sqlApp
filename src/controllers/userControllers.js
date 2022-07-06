@@ -6,6 +6,7 @@ const {
   responseFriendRequest,
   sendFriendRequest,
   changeAvatar,
+  editInfo,
   getUser,
 } = require("../services/userServices.js");
 
@@ -74,5 +75,12 @@ exports.getUser = async (req, res, next) => {
   const uuid = req.user.uuid;
 
   const user = await getUser(uuid);
+  res.status(200).json(user);
+};
+exports.editInfo = async (req, res, next) => {
+  const uuid = req.user.uuid;
+  const info = req.body;
+
+  const user = await editInfo(uuid, info);
   res.status(200).json(user);
 };
