@@ -1,13 +1,35 @@
 const { Server } = require("socket.io");
+const { User, Friends } = require("./src/models");
+let client = require("./src/config/redis");
 
-let users = [];
+let onlineUSers = [];
+const getOnlineUSers = async () => {
+  const results = await client.get("onlineUSers");
+  return JSON.parse(results);
+};
+const addUser = async (uuid, socketId) => {
+  onlineUSers = onlineUSers.filter((user) => {
+    return user.socketId != socketId;
+  });
 
-const addUser = (uuid, socketId) => {
-  !users.some((user) => user.uuid === uuid) && users.push({ uuid, socketId });
+  onlineUSers.push({ uuid, socketId });
+  console.log("esaa realuri", onlineUSers);
+  client.set("onlineUSers", JSON.stringify(onlineUSers));
 };
 
-const removeUser = (socketId) => {
-  users = users.filter((user) => socketId !== user.socketId);
+const removeUser = async (socketId) => {
+  try {
+    onlineUSers = await getOnlineUSers();
+  } catch (e) {
+    console.log(e);
+  }
+  console.log("es modis removidan", onlineUSers);
+  console.log("removidan", socketId);
+
+  client.set(
+    "onlineUSers",
+    JSON.stringify(onlineUSers.filter((user) => socketId !== user.socketId)),
+  );
 };
 
 const getUser = (uuid) => {
@@ -21,15 +43,56 @@ const socket = (server) => {
     });
 
     io.on("connection", (socket) => {
-      console.log(`user joined with socketId ${socket.id}`);
+      socket.on("addUser", async (uuid) => {
+        let friends = [];
 
-      socket.on("addUser", (uuid) => {
+        try {
+          onlineUSers = await getOnlineUSers();
+        } catch (e) {
+          console.log(e);
+        }
+
         addUser(uuid, socket.id);
+
+        const user = await User.findOne({
+          where: {
+            uuid,
+          },
+          include: [
+            { model: Friends, as: "receivedFriends" },
+            { model: Friends, as: "sentFriends" },
+          ],
+        });
+
+        user.sentFriends.forEach((friend) => {
+          friends.push(friend.receiver_uuid);
+        });
+
+        user.receivedFriends.forEach((friend) => {
+          friends.push(friend.sender_uuid);
+        });
+
+        const onlineFriends = [];
+
+        onlineUSers.forEach((user) => {
+          friends.forEach((friend) => {
+            user.uuid === friend && onlineFriends.push(user);
+          });
+        });
+
+        onlineFriends.forEach((friends) => {
+          io.to(friends.socketId).emit("friendJoined", {
+            uuid,
+          });
+        });
+
+        io.to(socket.id).emit("onlineFriends", {
+          onlineFriends,
+        });
       });
-      console.log(users);
+
       socket.on("disconnect", () => {
         removeUser(socket.id);
-        console.log("user disconnected");
       });
 
       socket.on("sendNotification", ({ senderUuid, receiverUuid, text }) => {

@@ -22,7 +22,7 @@ app.use(
     credentials: true,
   }),
 );
-
+console.log("_____________________________");
 app.use(express.json());
 app.use(verifyUser);
 app.use("/api/v1", routes);

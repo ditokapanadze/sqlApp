@@ -5,7 +5,7 @@ const { sequelize, User, Post } = require("./src/models");
 const process = require("process");
 require("./src/utils/eventEmitter");
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 console.log(process.env.NODE_ENV);
 console.log("asd");

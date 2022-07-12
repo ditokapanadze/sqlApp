@@ -73,7 +73,7 @@ module.exports = (sequelize, DataTypes) => {
       return {
         ...this.get(),
         id: undefined,
-        password: undefined,
+
         refreshToken: undefined,
       };
     }

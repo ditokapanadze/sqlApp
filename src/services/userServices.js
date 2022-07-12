@@ -162,9 +162,10 @@ const getUser = async (uuid) => {
     include: [
       { model: Post, as: "posts" },
       { model: Media, as: "media" },
-
       { model: PostLike, as: "likes" },
       { model: Avatar, as: "avatar" },
+      { model: Friends, as: "sentFriends" },
+      { model: Friends, as: "receivedFriends" },
     ],
   });
 
@@ -190,6 +191,29 @@ const editInfo = async (uuid, info) => {
   return user;
 };
 
+const changePassword = async (uuid, password, newPassword) => {
+  const user = await User.findOne({
+    where: {
+      uuid,
+    },
+  });
+  if (!user) {
+    throw new AppError(`user not found`, 400);
+  }
+
+  console.log(password);
+  console.log(user.password);
+
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  if (!isPasswordCorrect) {
+    throw new AppError(`password incorrect`, 400);
+  }
+  newPassword = await bcrypt.hash(newPassword, 12);
+  user.password = newPassword;
+  await user.save();
+  return user;
+};
+
 module.exports = {
   searchUser,
   getAll,
@@ -199,4 +223,5 @@ module.exports = {
   responseFriendRequest,
   getUser,
   editInfo,
+  changePassword,
 };

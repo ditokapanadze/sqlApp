@@ -1,5 +1,8 @@
-const redis = require("redis");
+// const redis = require("redis");
 
-const client = redis.createClient({ host: "localhost", port: 6379 });
+// const client = redis.createClient();
 
+const Redis = require("ioredis");
+
+const client = new Redis();
 module.exports = client;

@@ -6,6 +6,7 @@ const {
   responseFriendRequest,
   sendFriendRequest,
   changeAvatar,
+  changePassword,
   editInfo,
   getUser,
 } = require("../services/userServices.js");
@@ -83,4 +84,12 @@ exports.editInfo = async (req, res, next) => {
 
   const user = await editInfo(uuid, info);
   res.status(200).json(user);
+};
+
+exports.changePassword = async (req, res) => {
+  const uuid = req.user.uuid;
+  const { password, newPassword } = req.body;
+
+  const newUser = await changePassword(uuid, password, newPassword);
+  res.status(200).json({ msg: "password changed" });
 };

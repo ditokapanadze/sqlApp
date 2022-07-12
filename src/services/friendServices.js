@@ -139,6 +139,7 @@ const searchFriend = async (query, uuid) => {
     ],
   });
   friends.push(...sendFriends);
+
   const receivedFriends = await Friends.findAll({
     attributes: [],
     where: {
