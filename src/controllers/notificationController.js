@@ -1,7 +1,7 @@
 const {
   seenNotification,
   getNotifications,
-} = require("../services/seenNotification.js");
+} = require("../services/notificationServices.js");
 
 exports.seenNotification = async (req, res, next) => {
   const { uuid } = req.params;

@@ -14,6 +14,7 @@ exports.register = async (req, res, next) => {
 
   res.status(200).json({ token });
 };
+
 exports.login = async (req, res, next) => {
   const userData = req.body;
   const { accessToken, refreshToken, user } = await login(userData);
