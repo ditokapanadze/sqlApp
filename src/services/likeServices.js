@@ -14,13 +14,15 @@ const logger = require("../logger/logger");
 
 const sendLike = async (post_uuid, user_uuid, type) => {
   console.log(post_uuid);
-  console.log(user_uuid);
+  console.log(user_uuid, "useriii");
   console.log(type);
+
   const post = await Post.findOne({
     where: {
       uuid: post_uuid,
     },
   });
+
   if (!post) throw new AppError("post not found", 404);
 
   const existingLike = await PostLike.findOne({
@@ -30,19 +32,25 @@ const sendLike = async (post_uuid, user_uuid, type) => {
       type: type,
     },
   });
+
   if (existingLike) {
     await existingLike.destroy();
     return "post unlike";
   }
   const differentType = await PostLike.findOne({
-    post_uuid: post_uuid,
-    user_uuid: user_uuid,
+    where: {
+      post_uuid: post_uuid,
+      user_uuid: user_uuid,
+    },
   });
+
   if (differentType) {
+    console.log("Asdasdasdas");
     differentType.type = type;
     await differentType.save();
     return differentType;
   }
+
   const newLike = await PostLike.create({
     post_uuid: post_uuid,
     user_uuid: user_uuid,

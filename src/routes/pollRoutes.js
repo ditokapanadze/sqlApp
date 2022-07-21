@@ -4,14 +4,22 @@ const {
   getAll,
   getPoll,
   votePoll,
+  deletePoll,
+  freeze,
+  getSinglePoll,
 } = require("../controllers/pollControllers");
 const requireUser = require("../middlewares/requireUser");
 
 router.post("/", requireUser, createPoll);
-// get ll posts
+// get all poll
 router.get("/", requireUser, getAll);
 // get posts by user uuid
-router.get("/:uuid", requireUser, getPoll);
-// vote
+router.get("/user/:uuid", requireUser, getPoll);
+// get poll by uuid
+router.get("/:uuid", requireUser, getSinglePoll);
+
+router.delete("/:uuid", requireUser, deletePoll);
+// stop voting
+router.put("/freeze/:uuid", requireUser, freeze);
 router.put("/:poll/:answer", requireUser, votePoll);
 module.exports = router;

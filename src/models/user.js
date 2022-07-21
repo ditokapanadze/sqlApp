@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       PostLike,
       Avatar,
       Poll,
+      Vote,
     }) {
       this.hasMany(Post, {
         foreignKey: "author_uuid",
@@ -73,6 +74,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "creator_uuid",
         sourceKey: "uuid",
         as: "createdPolls",
+      });
+      this.hasMany(Vote, {
+        foreignKey: "voter_uuid",
+        sourceKey: "uuid",
+        as: "voter",
       });
     }
     toJSON() {

@@ -44,11 +44,13 @@ exports.getAll = async (req, res, next) => {
 
   res.status(200).json(posts);
 };
+
 exports.photoUpload = async (req, res, next) => {
   const posts = await photoUpload();
 
   res.status(200).json(posts);
 };
+
 exports.getPosts = async (req, res, next) => {
   const uuid = req.user.uuid;
 
@@ -56,6 +58,7 @@ exports.getPosts = async (req, res, next) => {
 
   res.status(200).json(posts);
 };
+
 exports.singlePost = async (req, res, next) => {
   console.log("uuid");
   const { uuid } = req.params;
@@ -64,6 +67,7 @@ exports.singlePost = async (req, res, next) => {
 
   res.status(200).json(posts);
 };
+
 exports.SingleHashtag = async (req, res, next) => {
   const hashtag = req.query.hashtag;
 
@@ -71,6 +75,7 @@ exports.SingleHashtag = async (req, res, next) => {
 
   res.status(200).json(posts);
 };
+
 exports.SimilarPosts = async (req, res, next) => {
   const { hashtag1, hashtag2, hashtag3 } = req.query;
 

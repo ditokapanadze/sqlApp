@@ -1,5 +1,5 @@
 const AppError = require("../utils/appError");
-const { Post, Hashtag, User, PostLike } = require("../models");
+const { Post, Hashtag, User, PostLike, PostComments } = require("../models");
 
 const { Op } = require("sequelize");
 const post = require("../models/post");
@@ -83,7 +83,23 @@ const getPosts = async (uuid) => {
 const singlePost = async (uuid) => {
   let posts = await Post.findOne({
     where: { uuid: uuid },
-    include: [{ model: Hashtag, as: "hashtags" }],
+    include: [
+      { model: Hashtag, as: "hashtags" },
+      { model: User, as: "user" },
+      { model: PostLike, as: "likes" },
+      {
+        model: PostComments,
+        as: "comments",
+        attribute: {
+          include: [
+            {
+              model: PostComments,
+              as: "reply",
+            },
+          ],
+        },
+      },
+    ],
   });
 
   if (!post) throw new AppError("no posts found", 400);

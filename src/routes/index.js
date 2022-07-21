@@ -8,6 +8,7 @@ const uploadRoutes = require("./uploadRoutes");
 const notificationRoutes = require("./notificationRoutes");
 const likeRoutes = require("./likeRoutes");
 const pollRoutes = require("./pollRoutes");
+const postCommentsRoutes = require("./postCommentsRoutes");
 
 router.use("/auth", authRoutes);
 router.use("/posts", postRoutes);
@@ -18,5 +19,6 @@ router.use("/friend", friendRoutes);
 router.use("/notification", notificationRoutes);
 router.use("/like", likeRoutes);
 router.use("/poll", pollRoutes);
+router.use("/postcomments", postCommentsRoutes);
 
 module.exports = router;

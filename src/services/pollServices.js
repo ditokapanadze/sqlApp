@@ -6,18 +6,17 @@ const {
   Poll,
   Answer,
   Vote,
+  User,
 } = require("../models");
 
 const { Sequelize, Op } = require("sequelize");
 const { uuid } = require("uuidv4");
 
 const createPoll = async (uuid, pollData) => {
-  console.log(uuid);
-  console.log(pollData);
-
   const poll = await Poll.create({
     creator_uuid: uuid,
     question: pollData.question,
+    expiration_date: pollData.expiration_date,
   });
 
   if (!poll) throw new AppError(`cant create poll`, 401);
@@ -62,6 +61,13 @@ const getPoll = async (uuid) => {
             ),
             "voteCount",
           ],
+          // [
+          //   Sequelize.literal(
+          //     "(SELECT voter_uuid FROM votes WHERE answer_uuid=`answers.uuid` AND poll_uuid=`poll_uuid` )",
+          //   ),
+          //   "voters",
+          // ],
+          "content",
         ],
       },
       { model: Vote, as: "votes" },
@@ -71,6 +77,25 @@ const getPoll = async (uuid) => {
 };
 
 const votePoll = async (userUuid, poll, answer) => {
+  const checkPoll = await Poll.findOne({
+    where: {
+      uuid: poll,
+    },
+  });
+
+  if (!checkPoll) throw new AppError(`poll not found`, 401);
+
+  if (checkPoll.freeze) {
+    throw new AppError(`voting stopped by poll creator`, 401);
+  }
+
+  let time = new Date();
+  if (
+    checkPoll.expiration_date &&
+    checkPoll.expiration_date.getTime() < time.getTime()
+  ) {
+    throw new AppError(`Voting fot this poll has ended`, 401);
+  }
   const checkVote = await Vote.findOne({
     where: { answer_uuid: answer, poll_uuid: poll, voter_uuid: userUuid },
   });
@@ -99,4 +124,55 @@ const votePoll = async (userUuid, poll, answer) => {
   return vote;
 };
 
-module.exports = { createPoll, getAll, getPoll, votePoll };
+const deletePoll = async (userUuid, pollUuid) => {
+  const poll = await Poll.findOne({
+    where: {
+      uuid: pollUuid,
+      creator_uuid: userUuid,
+    },
+  });
+  if (!poll) throw new AppError(`poll not found`, 401);
+
+  await poll.destroy();
+  return;
+};
+
+const freeze = async (userUuid, pollUuid) => {
+  const poll = await Poll.findOne({
+    where: {
+      uuid: pollUuid,
+      creator_uuid: userUuid,
+    },
+  });
+
+  console.log("___________________________________________");
+  if (!poll) throw new AppError(`poll not found`, 401);
+
+  poll.freeze = !poll.freeze;
+
+  await poll.save();
+
+  return poll;
+};
+
+const getSinglePoll = async (uuid) => {
+  const poll = await Poll.findOne({
+    where: {
+      uuid,
+    },
+  });
+  if (!poll) {
+    throw new AppError(`poll not found`, 401);
+  }
+  return poll;
+};
+
+module.exports = {
+  createPoll,
+  getAll,
+  getPoll,
+  votePoll,
+  deletePoll,
+  freeze,
+  getSinglePoll,
+};
